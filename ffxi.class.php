@@ -23,20 +23,106 @@ if ( !defined('EQDKP_INC') ){
 
 if(!class_exists('ffxi')) {
 	class ffxi extends game_generic {
-		public static $shortcuts = array();
+		public $version			= '2.1';
 		protected $this_game	= 'ffxi';
 		protected $types		= array('classes', 'races', 'factions', 'filters');
-		public $icons			= array('classes', 'events', 'races', 'ranks');
 		protected $classes		= array();
 		protected $races		= array();
 		protected $filters		= array();
 		public $langs			= array('english');
 
+		protected $class_dependencies = array(
+			array(
+				'name'		=> 'faction',
+				'type'		=> 'factions',
+				'admin' 	=> true,
+				'decorate'	=> false,
+				'parent'	=> false,
+			),
+			array(
+				'name'		=> 'race',
+				'type'		=> 'races',
+				'admin'		=> false,
+				'decorate'	=> true,
+				'parent'	=> array(
+					'faction' => array(
+						'bastok'	=> 'all',
+						'sandoria'	=> 'all',
+						'windurst'	=> 'all',
+					),
+				),
+			),
+			array(
+				'name'		=> 'class',
+				'type'		=> 'classes',
+				'admin'		=> false,
+				'decorate'	=> true,
+				'primary'	=> true,
+				'colorize'	=> true,
+				'roster'	=> true,
+				'recruitment' => true,
+				'parent'	=> array(
+					'race' => array(
+						0 	=> 'all',		// Unknown
+						1 	=> 'all',		// Elvaan
+						2 	=> 'all',		// Galka
+						3 	=> 'all',		// Hume
+						4 	=> 'all',		// Mithra
+						5 	=> 'all',		// Tarutaru
+					),
+				),
+			),
+		);
+		
+		protected $class_colors = array(
+			0	=> '#808080',
+			1	=> '#800000',
+			2	=> '#804040',
+			3	=> '#68578E',
+			4	=> '#0472EF',
+			5	=> '#BF4040',
+			6	=> '#FF80FF',
+			7	=> '#5b5955',
+			8	=> '#671AFF',
+			9	=> '#B37802',
+			10	=> '#FFFF00',
+			11	=> '#ADE1E5',
+			12	=> '#EBD35F',
+			13	=> '#408000',
+			14	=> '#FF0000',
+			15	=> '#6700A2',
+			16	=> '#775504',
+			17	=> '#0F7D7D',
+			18	=> '#00BF00',
+			19	=> '#2C77B9',
+			20	=> '#E2D6EC',
+		);
+
 		protected $glang		= array();
 		protected $lang_file	= array();
 		protected $path			= '';
 		public $lang			= false;
-		public $version			= '2.1';
+
+		public function profilefields(){
+			$xml_fields = array(
+				'gender'	=> array(
+					'type'			=> 'dropdown',
+					'category'		=> 'character',
+					'lang'			=> 'uc_gender',
+					'options'		=> array('Male' => 'uc_male', 'Female' => 'uc_female'),
+					'undeletable'	=> true,
+					'tolang'		=> true
+				),
+				'guild'	=> array(
+					'type'			=> 'text',
+					'category'		=> 'character',
+					'lang'			=> 'uc_guild',
+					'size'			=> 40,
+					'undeletable'	=> true,
+				),
+			);
+			return $xml_fields;
+		}
 
 		/**
 		* Initialises filters
@@ -70,29 +156,6 @@ if(!class_exists('ffxi')) {
 		*/
 		
 		public function get_OnChangeInfos($install=false){
-			$info['class_color'] = array(
-				0	=> '#808080',
-				1	=> '#800000',
-				2	=> '#804040',
-				3	=> '#68578E',
-				4	=> '#0472EF',
-				5	=> '#BF4040',
-				6	=> '#FF80FF',
-				7	=> '#5b5955',
-				8	=> '#671AFF',
-				9	=> '#B37802',
-				10	=> '#FFFF00',
-				11	=> '#ADE1E5',
-				12	=> '#EBD35F',
-				13	=> '#408000',
-				14	=> '#FF0000',
-				15	=> '#6700A2',
-				16	=> '#775504',
-				17	=> '#0F7D7D',
-				18	=> '#00BF00',
-				19	=> '#2C77B9',
-				20	=> '#E2D6EC',
-			);
 
 			$info['aq'] = array();
 
@@ -103,5 +166,4 @@ if(!class_exists('ffxi')) {
 		}
 	}
 }
-if(version_compare(PHP_VERSION, '5.3.0', '<')) registry::add_const('short_ffxi', ffxi::$shortcuts);
 ?>
