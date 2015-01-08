@@ -26,7 +26,7 @@ if ( !defined('EQDKP_INC') ){
 if(!class_exists('ffxi')) {
 	class ffxi extends game_generic {
 		protected static $apiLevel	= 20;
-		public $version				= '2.1';
+		public $version				= '2.2.0';
 		protected $this_game		= 'ffxi';
 		protected $types			= array('classes', 'races', 'factions', 'filters');
 		protected $classes			= array();
